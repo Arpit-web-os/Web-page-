@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Web Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Carousel Styles */
+    #carousel {
+      text-align: center;
+    }
+
+    #carousel img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    /* Joke API Section */
+    #joke {
+      text-align: center;
+    }
+
+    #joke-content {
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-style: italic;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      button {
+        font-size: 0.9em;
+      }
+
+      #joke-content {
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Web Page Demo</h1>
+
+  <!-- Carousel Section -->
+  <section id="carousel">
+    <h2>Image Carousel</h2>
+    <img id="carousel-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800" alt="Carousel Image">
+    <br>
+    <button onclick="prevImage()">Previous</button>
+    <button onclick="nextImage()">Next</button>
+  </section>
+
+  <!-- Joke Section -->
+  <section id="joke">
+    <h2>Need a Laugh?</h2>
+    <button onclick="fetchJoke()">Get a Joke</button>
+    <div id="joke-content"></div>
+  </section>
+
+  <script>
+    // Image Carousel Logic
+    const images = [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=800",
+      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800",
+      "https://images.unsplash.com/photo-1558981403-c5f9891f0b63?w=800"
+    ];
+    let currentImage = 0;
+    const imgEl = document.getElementById('carousel-img');
+
+    function showImage(index) {
+      imgEl.src = images[index];
+    }
+
+    function nextImage() {
+      currentImage = (currentImage + 1) % images.length;
+      showImage(currentImage);
+    }
+
+    function prevImage() {
+      currentImage = (currentImage - 1 + images.length) % images.length;
+      showImage(currentImage);
+    }
+
+    // Joke API Fetch
+    async function fetchJoke() {
+      const jokeEl = document.getElementById('joke-content');
+      jokeEl.textContent = 'Loading...';
+      try {
+        const res = await fetch('https://icanhazdadjoke.com/', {
+          headers: { Accept: 'application/json' }
+        });
+        const data = await res.json();
+        jokeEl.textContent = data.joke;
+      } catch (error) {
+        jokeEl.textContent = 'Failed to fetch a joke.';
+      }
+    }
+  </script>
+</body>
+</html>
