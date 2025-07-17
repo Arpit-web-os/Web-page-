@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio + To-Do + Product Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header, section, footer {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: #333;
+      color: white;
+      padding: 1rem;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .project, .product {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    @media (min-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+    <a href="#todo">To-Do List</a>
+    <a href="#products">Products</a>
+  </nav>
+
+  <header id="about">
+    <h1>About Me</h1>
+    <p>Hello! I'm a web developer passionate about building responsive, user-friendly interfaces.</p>
+  </header>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="grid">
+      <div class="project">Project 1 Description</div>
+      <div class="project">Project 2 Description</div>
+      <div class="project">Project 3 Description</div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email: example@example.com</p>
+  </section>
+
+  <section id="todo">
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Add new task" />
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <section id="products">
+    <h2>Products</h2>
+    <label>Filter by category: <select id="categoryFilter" onchange="filterAndSort()">
+      <option value="all">All</option>
+      <option value="electronics">Electronics</option>
+      <option value="books">Books</option>
+    </select></label>
+    <label>Sort by: <select id="sortCriteria" onchange="filterAndSort()">
+      <option value="none">None</option>
+      <option value="price">Price</option>
+      <option value="rating">Rating</option>
+    </select></label>
+    <div class="grid" id="productGrid"></div>
+  </section>
+
+  <script>
+    // To-Do List with localStorage
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        li.onclick = () => {
+          tasks.splice(index, 1);
+          saveTasks();
+        };
+        list.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      if (input.value.trim()) {
+        tasks.push(input.value.trim());
+        saveTasks();
+        input.value = '';
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    renderTasks();
+
+    // Product page filtering and sorting
+    const products = [
+      { name: 'Laptop', category: 'electronics', price: 999, rating: 4.5 },
+      { name: 'Headphones', category: 'electronics', price: 199, rating: 4.2 },
+      { name: 'Novel', category: 'books', price: 15, rating: 4.8 },
+      { name: 'Textbook', category: 'books', price: 45, rating: 4.0 },
+    ];
+
+    function filterAndSort() {
+      const category = document.getElementById('categoryFilter').value;
+      const sort = document.getElementById('sortCriteria').value;
+      let filtered = products.filter(p => category === 'all' || p.category === category);
+
+      if (sort === 'price') {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sort === 'rating') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+      filtered.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `<strong>${p.name}</strong><br>Category: ${p.category}<br>Price: $${p.price}<br>Rating: ${p.rating}`;
+        grid.appendChild(div);
+      });
+    }
+
+    filterAndSort();
+  </script>
+</body>
+</html>
